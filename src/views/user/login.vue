@@ -1,48 +1,78 @@
 <script setup lang="ts">
+import { reactive, ref } from "vue";
+import { Icon } from "@iconify/vue";
+import { useRouter } from "vue-router";
+import { ElMessage } from "element-plus";
+
+const router = useRouter();
 
 const userinfo = reactive({
-   username:"",
-   password:"",
-   code:""
-})
+  username: "",
+  password: "",
+  code: "",
+});
+
+const submitting = ref(false);
 
 const handleLogin = async () => {
-}
+  if (!userinfo.username || !userinfo.password) {
+    ElMessage.warning("请输入用户名和密码");
+    return;
+  }
+  submitting.value = true;
+  try {
+    // TODO: 调用登录接口
+    // const res = await login(userinfo)
+    // localStorage.setItem('token', res.token)
+    ElMessage.success("登录成功");
+    router.push("/console");
+  } catch (err) {
+    ElMessage.error("登录失败，请检查账号密码");
+  } finally {
+    submitting.value = false;
+  }
+};
 </script>
 
 <template>
   <div class="login-wrapper">
     <!-- 主题切换 -->
+    <!-- <div class="theme-toggle">
+      <Icon icon="solar:sun-bold-duotone" />
+    </div> -->
 
     <!-- 装饰背景 -->
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
 
     <div class="login-container">
       <!-- 左侧：功能引导区 -->
       <div class="hero-section">
         <div class="hero-content">
-          <div class="brand-tag">商城管理系统 v1.0</div>
-          <h1>管理商城，<br />助力业务增长</h1>
-          <p>全面覆盖订单、商品与用户管理，让经营决策更科学、更高效。</p>
+          <div class="brand-tag">落地页管理系统 v1.0</div>
+          <h1>管理落地页，<br />助力转化增长</h1>
+          <p>全面覆盖页面搭建、内容投放与数据追踪，让营销决策更科学、更高效。</p>
 
           <ul class="feature-list">
             <li>
-              <IconMdiCartOutline /> <span>智能订单处理</span>
+              <Icon icon="solar:document-add-bold-duotone" /> <span>可视化页面搭建</span>
             </li>
             <li>
-              <IconMdiPackageVariantClosed /> <span>数字化仓储管理</span>
+              <Icon icon="solar:layers-bold-duotone" /> <span>多渠道内容投放</span>
             </li>
             <li>
-              <IconMdiChartBar /> <span>多维数据洞察</span>
+              <Icon icon="solar:chart-2-bold-duotone" /> <span>实时数据洞察</span>
             </li>
           </ul>
         </div>
       </div>
+
       <!-- 右侧：登录卡片区 -->
       <div class="form-section">
         <div class="login-card">
           <div class="login-header">
             <div class="logo-wrapper">
-              <IconMdiStorefront />
+              <Icon icon="solar:widget-5-bold-duotone" />
             </div>
             <h2>后台登录</h2>
             <p>请输入您的管理员账号以继续</p>
@@ -52,32 +82,34 @@ const handleLogin = async () => {
             <div class="form-group">
               <label>管理账号</label>
               <div class="input-wrapper">
-                <IconMdiAccount class="input-icon" />
-                <input v-model="userinfo.username" placeholder="请输入用户名密码" required />
+                <Icon icon="solar:user-bold-duotone" class="input-icon" />
+                <input v-model="userinfo.username" placeholder="请输入用户名" required />
               </div>
             </div>
 
             <div class="form-group">
               <label>访问密码</label>
               <div class="input-wrapper">
-                <IconMdiLock class="input-icon" />
-                <input v-model="userinfo.password" type="请输入密码" placeholder="••••••••" required />
+                <Icon icon="solar:lock-password-bold-duotone" class="input-icon" />
+                <input
+                  v-model="userinfo.password"
+                  type="password"
+                  placeholder="••••••••"
+                  required
+                />
               </div>
             </div>
 
-            <!-- <div class="form-group">
-              <label>安全验证</label>
-              <SliderCaptcha @success="handleCaptchaSuccess" />
-            </div> -->
-            <ElButton size="large"    type="primary">立即登录</ElButton>
-            <!-- <button class="login-btn" :disabled="submitting || !captchaPassed">
-              <IconMdiLoading v-if="submitting" class="animate-spin" />
-              <span v-else>立即登录</span>
-            </button> -->
+            <ElButton
+              size="large"
+              type="primary"
+              native-type="submit"
+              :loading="submitting"
+              class="login-btn"
+            >
+              立即登录
+            </ElButton>
           </form>
-          <!-- <div class="login-footer">
-            <p>测试账号: <code>admin / 123456</code></p>
-          </div> -->
         </div>
       </div>
     </div>
@@ -93,11 +125,8 @@ const handleLogin = async () => {
   justify-content: center;
   overflow: hidden;
   height: 100vh;
+  background-color: #f1f5f9;
   transition: background-color 0.3s;
-
-  // @include useTheme using ($themeMap) {
-  //   background-color: theme($themeMap, 'bg', 'base');
-  // }
 }
 
 .theme-toggle {
@@ -116,12 +145,9 @@ const handleLogin = async () => {
   z-index: 10;
   transition: all 0.3s;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-
-  // @include useTheme using ($themeMap) {
-  //   background: theme($themeMap, 'component', 'card', 'bg');
-  //   border: 1px solid theme($themeMap, 'border', 'base');
-  //   color: theme($themeMap, 'text', 'secondary');
-  // }
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  color: #475569;
 }
 
 .theme-toggle:hover {
@@ -166,13 +192,13 @@ const handleLogin = async () => {
   box-shadow: 0 40px 100px rgba(0, 0, 0, 0.1);
   overflow: hidden;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-
+  background: #fff;
+  // border-radius: 20px;
 }
 
 /* 左侧 Hero 区 */
 .hero-section {
   flex: 1.2;
-
   background: linear-gradient(225deg, #1e293b 0%, #0f172a 100%);
   padding: 60px;
   display: flex;
@@ -227,10 +253,11 @@ const handleLogin = async () => {
   gap: 12px;
   color: #cbd5e1;
   font-size: 15px;
-}
 
-.feature-list li svg {
-  color: #3b82f6;
+  :deep(svg) {
+    color: #3b82f6;
+    font-size: 20px;
+  }
 }
 
 /* 右侧 Form 区 */
@@ -263,23 +290,22 @@ const handleLogin = async () => {
   font-size: 28px;
   margin: 0 auto 16px;
   transition: all 0.3s;
-
-
+  background: linear-gradient(135deg, #3b82f6, #2563eb);
+  color: #fff;
 }
 
 .login-header h2 {
   font-size: 24px;
   margin: 0 0 6px;
   transition: color 0.3s;
-
-
+  color: #1e293b;
 }
+
 .login-header p {
   font-size: 14px;
   margin: 0;
   transition: color 0.3s;
-
-
+  color: #64748b;
 }
 
 .login-form {
@@ -293,41 +319,49 @@ const handleLogin = async () => {
   flex-direction: column;
   gap: 6px;
 }
+
 .form-group label {
   font-size: 13px;
   font-weight: 600;
   transition: color 0.3s;
-
-
+  color: #475569;
 }
 
 .input-wrapper {
   position: relative;
   display: flex;
   align-items: center;
-}
-.input-icon {
-  position: absolute;
-  left: 14px;
-  font-size: 18px;
-  transition: color 0.3s;
 
+  .input-icon {
+    position: absolute;
+    left: 14px;
+    font-size: 18px;
+    transition: color 0.3s;
+    color: #94a3b8;
+    pointer-events: none;
+  }
 
-}
-.input-wrapper input {
-  width: 100%;
-  padding: 12px 12px 12px 44px;
-  font-size: 14px;
-  transition: all 0.3s;
+  input {
+    width: 100%;
+    padding: 12px 12px 12px 44px;
+    font-size: 14px;
+    transition: all 0.3s;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    color: #1e293b;
 
+    &:focus {
+      outline: none;
+      background: #fff;
+      border-color: #3b82f6;
+      box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+    }
 
-}
-.input-wrapper input:focus {
-  outline: none;
-  background: transparent;
-  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
-
-
+    &::placeholder {
+      color: #cbd5e1;
+    }
+  }
 }
 
 .login-btn {
@@ -343,16 +377,16 @@ const handleLogin = async () => {
   justify-content: center;
   gap: 8px;
   margin-top: 10px;
+  width: 100%;
 
+  &:hover:not(:disabled) {
+    transform: translateY(-1px);
+  }
 
-}
-.login-btn:hover:not(:disabled) {
-  transform: translateY(-1px);
-
-}
-.login-btn:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
 }
 
 .login-footer {
@@ -360,17 +394,20 @@ const handleLogin = async () => {
   text-align: center;
   font-size: 12px;
   transition: color 0.3s;
-
-
+  color: #94a3b8;
 }
+
 code {
   padding: 2px 4px;
   border-radius: 4px;
   transition: background-color 0.3s;
+  background: #f1f5f9;
 }
+
 .animate-spin {
   animation: spin 1s linear infinite;
 }
+
 @keyframes spin {
   from {
     transform: rotate(0deg);

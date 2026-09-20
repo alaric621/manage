@@ -14,7 +14,8 @@ export default defineConfig({
     vue(),
     AutoImport({
       imports:[
-        "vue"
+        "vue",
+        "vue-router"
       ],
       dts:"typings/auto-imports.d.ts",
       resolvers: [
