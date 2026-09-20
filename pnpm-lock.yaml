@@ -24,6 +24,9 @@ importers:
 
   .:
     dependencies:
+      '@iconify/vue':
+        specifier: ^5.0.2
+        version: 5.0.2(vue@3.6.0-rc.9(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2))
       element-plus:
         specifier: ^2.14.6
         version: 2.14.6(vue@3.6.0-rc.9(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2))
@@ -233,6 +236,14 @@ packages:
 
   '@floating-ui/utils@0.2.12':
     resolution: {integrity: sha512-HpCo8tmWzLVad5s2d19EhAz5zqrrQ6s69qd6moPMQvkOuSwDT1YgRfWSVuc4ennqrgv3OHppiOGMQ7oC13yIww==}
+
+  '@iconify/types@2.0.0':
+    resolution: {integrity: sha512-+wluvCrRhXrhyOmRDJ3q8mux9JkKy5SJ/v8ol2tu4FVjyYvtEzkc/3pK15ET6RKg4b4w4BmTk1+gsCUhf21Ykg==}
+
+  '@iconify/vue@5.0.2':
+    resolution: {integrity: sha512-Xo8th16qDH2+o0LBxmqaosJheTU6v8QeDbpP40txrqz9dusBUAf/voOAC+v9WT4DvDZx8CWiA4dq8LMB/rasyQ==}
+    peerDependencies:
+      vue: '>=3.0.0'
 
   '@jridgewell/gen-mapping@0.3.13':
     resolution: {integrity: sha512-2kkt/7niJ6MgEPxF0bYdQ6etZaA+fQvDcLKckhy1yIQOzaoKjBBjSj63/aLVjYE3qhRt5dvM+uUyfCg6UKCBbA==}
@@ -1666,6 +1677,13 @@ snapshots:
       '@floating-ui/utils': 0.2.12
 
   '@floating-ui/utils@0.2.12': {}
+
+  '@iconify/types@2.0.0': {}
+
+  '@iconify/vue@5.0.2(vue@3.6.0-rc.9(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2))':
+    dependencies:
+      '@iconify/types': 2.0.0
+      vue: 3.6.0-rc.9(typescript-native-bridge@6.0.3-bridge.17.tsgo.7.0.2)
 
   '@jridgewell/gen-mapping@0.3.13':
     dependencies:

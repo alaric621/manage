@@ -1,4 +1,5 @@
 <script setup lang="ts">
+
 const userinfo = reactive({
    username:"",
    password:"",
@@ -14,8 +15,6 @@ const handleLogin = async () => {
     <!-- 主题切换 -->
 
     <!-- 装饰背景 -->
-    <div class="blob blob-1"></div>
-    <div class="blob blob-2"></div>
 
     <div class="login-container">
       <!-- 左侧：功能引导区 -->
