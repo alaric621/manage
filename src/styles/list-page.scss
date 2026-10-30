@@ -1,0 +1,293 @@
+// ============================================================
+// 列表页通用样式（全局）
+// 使用方式：页面根节点 class 使用 `list-page`，内部按需使用
+// ============================================================
+
+// ---------- 设计令牌 ----------
+$primary: #409eff;
+$success: #52b788;
+$warning: #e6a23c;
+$danger: #f56c6c;
+$text-main: #1f2d3d;
+$text-secondary: #8a94a6;
+$text-regular: #5a6472;
+$border-light: #eef1f6;
+$bg-soft: #f7f9fc;
+$radius-card: 14px;
+$radius-block: 12px;
+$gap: 16px;
+$shadow-card: 0 2px 8px rgba(31, 45, 61, 0.04);
+$shadow-hover: 0 10px 28px rgba(31, 45, 61, 0.10);
+
+@mixin flex-between {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+@mixin flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+// ---------- 页面壳 ----------
+.list-page {
+  padding: $gap;
+  min-height: 100%;
+
+  // 概览卡片区
+  .stat-row {
+    margin-bottom: $gap;
+  }
+
+  // 概览卡片
+  .stat-card {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 16px;
+    background: #fff;
+    border: 1px solid $border-light;
+    border-radius: $radius-card;
+    box-shadow: $shadow-card;
+    margin-bottom: $gap;
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: $shadow-hover;
+    }
+
+    .stat-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      @include flex-center;
+      background: var(--accent-soft);
+      color: var(--accent);
+      flex-shrink: 0;
+    }
+
+    .stat-value {
+      font-size: 20px;
+      font-weight: 700;
+      color: $text-main;
+    }
+
+    .stat-label {
+      font-size: 12px;
+      color: $text-secondary;
+    }
+  }
+
+  // 面板卡片
+  .panel-card {
+    border: 1px solid $border-light;
+    box-shadow: $shadow-card;
+    margin-bottom: $gap;
+    transition: box-shadow 0.25s ease;
+
+    &:hover {
+      box-shadow: $shadow-hover;
+    }
+
+    :deep(.el-card__header) {
+      padding: 14px 18px;
+      border-bottom: 1px solid $border-light;
+    }
+
+    :deep(.el-card__body) {
+      padding: 16px 18px;
+    }
+  }
+
+  // 筛选表单
+  .filter-card {
+    .filter-form {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0 4px;
+
+      :deep(.el-form-item) {
+        margin-bottom: 0;
+      }
+    }
+  }
+
+  // 面板头部
+  .panel-header {
+    @include flex-between;
+  }
+
+  .panel-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 15px;
+    font-weight: 600;
+    color: $text-main;
+
+    .title-dot {
+      width: 6px;
+      height: 16px;
+      border-radius: 3px;
+      background: linear-gradient(180deg, $primary, #7cc0ff);
+    }
+
+    .title-sub {
+      font-size: 12px;
+      font-weight: 400;
+      color: $text-secondary;
+      margin-left: 2px;
+    }
+  }
+
+  .panel-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .btn-icon {
+    margin-right: 4px;
+    vertical-align: middle;
+  }
+
+  // 状态标签页
+  .status-tabs {
+    margin-bottom: 12px;
+
+    :deep(.el-tabs__header) {
+      margin-bottom: 0;
+    }
+
+    :deep(.el-tabs__nav-wrap::after) {
+      height: 1px;
+      background: $border-light;
+    }
+
+    :deep(.el-tabs__item) {
+      font-size: 13px;
+      color: $text-secondary;
+
+      &.is-active {
+        color: $primary;
+        font-weight: 600;
+      }
+    }
+  }
+
+  // 表格
+  .pretty-table {
+    :deep(.el-table__header th) {
+      background: #f8fafd;
+      color: $text-secondary;
+      font-weight: 500;
+      font-size: 12px;
+    }
+
+    :deep(.el-table__row:hover > td) {
+      background: #f5f9ff !important;
+    }
+
+    :deep(.el-table td) {
+      border-bottom: 1px solid $border-light;
+      color: $text-regular;
+      vertical-align: middle;
+    }
+
+    :deep(.el-table__inner-wrapper::before) {
+      display: none;
+    }
+  }
+
+  // 状态胶囊
+  .status-dot {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 3px 10px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 500;
+
+    .dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: currentColor;
+    }
+  }
+
+  // 分页
+  .pagination-wrap {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 16px;
+  }
+
+  // 详情抽屉通用
+  .drawer-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 16px;
+    background: $bg-soft;
+    border-radius: $radius-block;
+    margin-bottom: 16px;
+
+    .drawer-avatar {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      @include flex-center;
+      color: #fff;
+      font-size: 20px;
+      font-weight: 600;
+      flex-shrink: 0;
+    }
+
+    .drawer-name {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 16px;
+      font-weight: 600;
+      color: $text-main;
+    }
+
+    .drawer-no {
+      margin-top: 4px;
+      font-size: 12px;
+      color: $text-secondary;
+    }
+  }
+
+  .drawer-desc {
+    :deep(.el-descriptions__label) {
+      width: 100px;
+      color: $text-secondary;
+      background: #f8fafd;
+    }
+  }
+
+  .drawer-actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 24px;
+    padding-top: 16px;
+    border-top: 1px solid $border-light;
+  }
+
+  // 响应式
+  @media (max-width: 768px) {
+    padding: 12px;
+
+    .filter-form {
+      :deep(.el-form-item) {
+        width: 100%;
+      }
+    }
+  }
+}

@@ -74,27 +74,23 @@ onMounted(async () => {
   <div class="container">
     <ElContainer>
       <ElAside :class="{ collapse: collapse }">
-        <ElMenu router :collapse="collapse">
-          <Menuc :menus="menuList"></Menuc>
-        </ElMenu>
+        <ElScrollbar>
+          <ElMenu unique-opened router :collapse="collapse">
+            <Menuc :menus="menuList"></Menuc>
+          </ElMenu>
+        </ElScrollbar>
       </ElAside>
 
       <ElContainer class="main-layout">
         <ElHeader class="header">
           <!-- 左侧：折叠按钮 + 面包屑 -->
           <div class="header__left">
-            <Icon
-              class="header__collapse-btn"
-              :icon="collapse ? 'solar:list-cross-minimalistic-broken' : 'solar:list-broken'"
-              @click="toggleCollapse"
-            />
+            <Icon class="header__collapse-btn"
+              :icon="collapse ? 'solar:list-cross-minimalistic-broken' : 'solar:list-broken'" @click="toggleCollapse" />
 
             <ElBreadcrumb class="header__breadcrumb" separator="/">
               <ElBreadcrumbItem :to="{ path: '/console' }">首页</ElBreadcrumbItem>
-              <ElBreadcrumbItem
-                v-for="item in breadcrumbs"
-                :key="item.path"
-              >
+              <ElBreadcrumbItem v-for="item in breadcrumbs" :key="item.path">
                 {{ item.title }}
               </ElBreadcrumbItem>
             </ElBreadcrumb>
@@ -103,12 +99,7 @@ onMounted(async () => {
           <!-- 右侧：搜索 + 通知 + 用户 -->
           <div class="header__right">
             <!-- 搜索 -->
-            <ElInput
-              class="header__search"
-              placeholder="搜索菜单..."
-              :prefix-icon="undefined"
-              clearable
-            >
+            <ElInput class="header__search" placeholder="搜索菜单..." :prefix-icon="undefined" clearable>
               <template #prefix>
                 <Icon icon="solar:magnifer-broken" />
               </template>
@@ -162,11 +153,15 @@ onMounted(async () => {
   height: 100vh;
   overflow: hidden;
   box-sizing: border-box;
-
+  .el-aside {
+    height: 100vh;
+  }
   .collapse {
     width: auto !important;
   }
-
+  .el-main{
+    padding:0;
+  }
   .el-menu {
     border: none;
   }

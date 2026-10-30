@@ -94,7 +94,7 @@ const handleLogin = async () => {
                 <input
                   v-model="userinfo.password"
                   type="password"
-                  placeholder="••••••••"
+                  placeholder="请输入密码"
                   required
                 />
               </div>
