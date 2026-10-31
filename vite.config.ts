@@ -15,10 +15,12 @@ export default defineConfig({
     AutoImport({
       imports:[
         "vue",
-        "vue-router"
+        "vue-router",
+         "@vueuse/core"
       ],
       dts:"typings/auto-imports.d.ts",
       resolvers: [
+
         ElementPlusResolver()
       ]
     }),
