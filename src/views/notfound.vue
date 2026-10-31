@@ -85,7 +85,7 @@ $white: #ffffff;
   align-items: center;
   justify-content: center;
   padding: 0 16px;
-  background-color: $bg-color;
+  // background-color: $bg-color;
 
   // ===== 插画 =====
   &__illustration {
