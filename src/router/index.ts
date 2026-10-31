@@ -26,11 +26,18 @@ const router = createRouter({
         ...analytics,
         ...settings,
         {
+  path: '/profile',
+  name: 'Profile',
+  component: () => import('@/views/profile/index.vue'),
+  meta: { title: '个人中心' }
+},
+        {
           path: '/:pathMatch(.*)*',
           name: 'NotFound',
           component: () => import('@/views/notfound.vue'),
           meta: { title: '页面不存在' }
         }
+
       ]
     },
     {
