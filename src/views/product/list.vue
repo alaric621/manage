@@ -403,7 +403,9 @@ $shadow-hover: 0 10px 28px rgba(31, 45, 61, 0.10);
 .product-page {
   padding: $gap;
   // background: $bg-soft;
-  min-height: 100%;
+  // min-height: 100%;
+  height: 100%;
+  box-sizing: border-box;
 }
 
 // ---------- 筛选 ----------

@@ -353,7 +353,8 @@ $shadow-card: 0 2px 8px rgba(31, 45, 61, 0.04);
 .product-create-page {
   padding: $gap;
   background: $bg-soft;
-  min-height: 100%;
+  // min-height: 100%;
+  
   padding-bottom: 88px;
 }
 

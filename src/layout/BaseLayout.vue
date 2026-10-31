@@ -6,7 +6,7 @@ import { getByMenu } from "@/api/system.ts";
 
 const collapse = ref(false);
 const menuList = ref<Menu[]>([]);
-
+const activeMenu = computed(() => route.path)
 const route = useRoute();
 const router = useRouter();
 
@@ -75,7 +75,7 @@ onMounted(async () => {
     <ElContainer>
       <ElAside :class="{ collapse: collapse }">
         <ElScrollbar>
-          <ElMenu unique-opened router :collapse="collapse">
+          <ElMenu  :default-active="activeMenu"  persistent  unique-opened router :collapse="collapse">
             <Menuc :menus="menuList"></Menuc>
           </ElMenu>
         </ElScrollbar>
@@ -141,7 +141,9 @@ onMounted(async () => {
         </ElHeader>
 
         <ElMain>
-          <RouterView />
+          <ElScrollbar>
+            <RouterView />
+          </ElScrollbar>
         </ElMain>
       </ElContainer>
     </ElContainer>
@@ -159,8 +161,8 @@ onMounted(async () => {
   .collapse {
     width: auto !important;
   }
-  .el-main{
-    padding:0;
+  .el-main {
+    padding: 0;
   }
   .el-menu {
     border: none;
