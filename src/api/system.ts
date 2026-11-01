@@ -106,7 +106,53 @@ export async function getByMenu(): Promise<Menu[]> {
                               { "title": "支付配置", "path": "/settings/payment", "icon": "solar:card-bold-duotone" },
                               { "title": "物流/运费", "path": "/settings/shipping", "icon": "solar:delivery-bold-duotone" },
                         ]
-                  }
+                  },
+                          {
+                  "title": "消息管理",
+                  "path": "/message",
+                  "icon": "solar:chat-round-bold-duotone",
+                  "children": [
+                        { "title": "消息记录", "path": "/message/list", "icon": "solar:chat-line-bold-duotone" },
+                        { "title": "撤回/删除记录", "path": "/message/recall", "icon": "solar:refresh-circle-bold-duotone" },
+                        { "title": "敏感词过滤", "path": "/message/sensitive", "icon": "solar:shield-warning-bold-duotone" },
+                        { "title": "消息推送", "path": "/message/push", "icon": "solar:bell-bing-bold-duotone" },
+                        { "title": "系统通知", "path": "/message/notice", "icon": "solar:chart-square-outline" }
+                  ]
+            },
+            {
+                  "title": "群组管理",
+                  "path": "/group",
+                  "icon": "solar:users-group-two-rounded-bold-duotone",
+                  "children": [
+                        { "title": "群组列表", "path": "/group/list", "icon": "solar:list-bold-duotone" },
+                        { "title": "群成员", "path": "/group/member", "icon": "solar:users-group-rounded-bold-duotone" },
+                        { "title": "群公告", "path": "/group/notice", "icon": "solar:document-text-bold-duotone" },
+                        { "title": "解散/禁言", "path": "/group/ban", "icon": "solar:forbidden-circle-bold-duotone" }
+                  ]
+            },
+            {
+                  "title": "内容审核",
+                  "path": "/audit",
+                  "icon": "solar:shield-check-bold-duotone",
+                  "children": [
+                        { "title": "文字审核", "path": "/audit/text", "icon": "solar:text-bold-duotone" },
+                        { "title": "图片审核", "path": "/audit/image", "icon": "solar:gallery-bold-duotone" },
+                        { "title": "语音/视频审核", "path": "/audit/media", "icon": "solar:video-frame-bold-duotone" },
+                        { "title": "举报处理", "path": "/audit/report", "icon": "solar:flag-bold-duotone" },
+                        { "title": "违规记录", "path": "/audit/violation", "icon": "solar:danger-triangle-bold-duotone" }
+                  ]
+            },
+            // {
+            //       "title": "运营管理",
+            //       "path": "/operation",
+            //       "icon": "solar:chart-square-outline",
+            //       "children": [
+            //             { "title": "表情包管理", "path": "/operation/emoji", "icon": "solar:emoji-funny-circle-bold-duotone" },
+            //             { "title": "活动/公告", "path": "/operation/activity", "icon": "solar:gift-bold-duotone" },
+            //             { "title": "广告位", "path": "/operation/ads", "icon": "solar:gallery-wide-bold-duotone" },
+            //             { "title": "版本更新", "path": "/operation/version", "icon": "solar:refresh-bold-duotone" }
+            //       ]
+            // },
             ]
 
       // return [

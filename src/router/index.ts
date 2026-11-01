@@ -14,6 +14,7 @@ const router = createRouter({
     {
       path: "/",
       name: "basic",
+      redirect:"/console",
       component: () => import("@/layout/BaseLayout.vue"),
       children: [
         ...user,

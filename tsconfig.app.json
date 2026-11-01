@@ -5,6 +5,7 @@
     "src/**/*",
     "src/**/*.vue",
     "typings/**/*",
+    
   ],
   "exclude": [
     "src/**/__tests__/*"
@@ -20,7 +21,9 @@
     "paths": {
       "@/*": [
         "./src/*"
-      ]
+        
+      ],
+      "@model/*": ["./model/*"]
     },
     // `vue-tsc --build` produces a .tsbuildinfo file for incremental type-checking.
     // Specified here to keep it out of the root directory.

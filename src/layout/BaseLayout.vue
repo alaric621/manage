@@ -25,13 +25,7 @@ onMounted(async () => {
     <ElContainer>
       <ElAside :class="{ collapse }">
         <ElScrollbar>
-          <ElMenu
-            persistent
-            unique-opened
-            router
-            :collapse="collapse"
-            :default-active="activeMenu"
-          >
+          <ElMenu persistent unique-opened router :collapse="collapse" :default-active="activeMenu">
             <Menuc :menus="menuList"></Menuc>
           </ElMenu>
         </ElScrollbar>
@@ -40,8 +34,8 @@ onMounted(async () => {
       <ElContainer class="main-layout">
         <AppHeader :collapse="collapse" @toggle-collapse="toggleCollapse" />
 
-        <ElMain>
-          <ElScrollbar>
+        <ElMain class="main-content">
+          <ElScrollbar class="main-scrollbar">
             <RouterView />
           </ElScrollbar>
         </ElMain>
@@ -72,19 +66,32 @@ onMounted(async () => {
     border: none;
   }
 
-  .main-layout {
+ .main-layout {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  padding: 0;
+  background: #edf2fa;
+  box-sizing: border-box;
+
+  .el-main {
+    flex: 1;
+    min-height: 0;
+    padding: 0;
     display: flex;
     flex-direction: column;
-    height: 100vh;
-    padding: 0;
-    background: #edf2fa;
-    box-sizing: border-box;
+  }
 
-    .el-main {
-      flex: 1;
+  .main-scrollbar {
+    flex: 1;
+    min-height: 0;
+    
+    :deep(.el-scrollbar__view) {
+      box-sizing: border-box;
       height: 100%;
     }
   }
+}
 }
 
 @media (prefers-color-scheme: dark) {

@@ -23,6 +23,7 @@
     "@types/node": "^24.13.4",
     "@vitejs/plugin-vue": "^6.0.8",
     "@vue/tsconfig": "^0.9.1",
+    "msw": "^3.0.3",
     "npm-run-all2": "^9.0.3",
     "sass-embedded": "^1.104.1",
     "typescript": "~6.0.0",

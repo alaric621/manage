@@ -1,163 +1,206 @@
 <template>
   <div class="product-create-page">
-    <!-- 顶部进度条 -->
-    <div class="progress-bar">
-      <div class="progress-inner">
-        <div class="progress-text">
-          <span class="progress-label">{{ isEdit ? '编辑商品' : '新增商品' }}</span>
-          <span class="progress-tip">已完成 {{ completion }}%</span>
-        </div>
-        <ElProgress :percentage="completion" :stroke-width="6" :show-text="false" class="progress-line" />
+    <!-- 顶部固定操作条 -->
+    <div class="top-bar">
+      <div class="top-bar__left">
+        <span class="top-bar__title">{{ isEdit ? '编辑商品' : '新增商品' }}</span>
+        <ElTag v-if="isEdit" size="small" effect="light" type="primary">编辑中</ElTag>
+      </div>
+      <div class="top-bar__right">
+        <ElButton @click="go('/product/list')">取消</ElButton>
+        <ElButton :loading="saving" @click="handleSave('draft')">保存草稿</ElButton>
+        <ElButton type="primary" :loading="saving" @click="handleSave('publish')">
+          保存并上架
+        </ElButton>
       </div>
     </div>
 
     <ElForm ref="formRef" :model="form" :rules="rules" label-width="100px" class="product-form">
-      <!-- 基础信息 -->
-      <SectionCard title="基础信息">
-        <template #extra>
-          <ElTag v-if="form.name" size="small" effect="light" round type="success">已填写</ElTag>
-        </template>
-        <ElRow :gutter="24">
-          <ElCol :xs="24" :md="14">
-            <ElFormItem label="商品名称" prop="name">
-              <ElInput v-model="form.name" placeholder="请输入商品名称" maxlength="60" show-word-limit clearable />
-            </ElFormItem>
-            <ElFormItem label="商品分类" prop="category">
-              <ElCascader
-                v-model="form.category"
-                :options="categoryOptions"
-                placeholder="请选择商品分类"
-                style="width: 100%"
-                clearable
-              />
-            </ElFormItem>
-            <ElFormItem label="品牌">
-              <ElSelect v-model="form.brand" placeholder="请选择品牌" clearable filterable style="width: 100%">
-                <ElOption v-for="b in brands" :key="b.value" :label="b.label" :value="b.value" />
-              </ElSelect>
-            </ElFormItem>
-            <ElFormItem label="商品标签">
-              <ElSelect
-                v-model="form.tags"
-                multiple
-                filterable
-                allow-create
-                default-first-option
-                placeholder="选择或输入标签"
-                style="width: 100%"
-              >
-                <ElOption v-for="t in tagOptions" :key="t" :label="t" :value="t" />
-              </ElSelect>
-            </ElFormItem>
-          </ElCol>
-          <ElCol :xs="24" :md="10">
-            <ElFormItem label="商品编号">
-              <ElInput v-model="form.no" placeholder="自动生成" disabled />
-            </ElFormItem>
-            <ElFormItem label="上架状态">
-              <ElRadioGroup v-model="form.status">
-                <ElRadio value="on">立即上架</ElRadio>
-                <ElRadio value="off">暂不上架</ElRadio>
-              </ElRadioGroup>
-            </ElFormItem>
-            <ElFormItem label="排序">
-              <ElInputNumber v-model="form.sort" :min="0" :max="9999" controls-position="right" style="width: 100%" />
-            </ElFormItem>
-            <ElFormItem label="商品简介">
-              <ElInput
-                v-model="form.desc"
-                type="textarea"
-                :rows="3"
-                maxlength="120"
-                show-word-limit
-                placeholder="简要描述商品卖点"
-              />
-            </ElFormItem>
-          </ElCol>
-        </ElRow>
-      </SectionCard>
-
-      <!-- 商品图片 -->
-      <SectionCard title="商品图片">
-        <template #extra>
-          <span class="header-tip">建议 800×800px，最多 5 张，首张为主图</span>
-        </template>
-        <ElFormItem label-width="0">
-          <ImageUploader v-model="form.images" :max="5" />
-        </ElFormItem>
-      </SectionCard>
-
-      <!-- 规格与价格 -->
-      <SectionCard title="规格与价格">
-        <template #extra>
-          <ElRadioGroup v-model="skuMode" size="small" @change="handleSkuModeChange">
-            <ElRadioButton label="single">单规格</ElRadioButton>
-            <ElRadioButton label="multi">多规格</ElRadioButton>
-          </ElRadioGroup>
-        </template>
-
-        <!-- 单规格 -->
-        <SingleSkuForm v-if="skuMode === 'single'" v-model="form.single" />
-
-        <!-- 多规格 -->
-        <template v-else>
-          <SpecEditor v-model="form.specs" @change="rebuildSkuRows" />
-          <SkuTable v-model:rows="skuRows" :specs="form.specs" @change="onSkuChange" />
-        </template>
-      </SectionCard>
-
-      <!-- 商品详情 -->
-      <SectionCard title="商品详情">
-        <template #extra>
-          <span class="header-tip">支持纯文本，可后续接入富文本编辑器</span>
-        </template>
-        <ElFormItem label-width="0">
-          <div class="editor-wrap">
-            <div class="editor-toolbar">
-              <ElButton link size="small" @click="insertDetail('【商品卖点】')">插入卖点</ElButton>
-              <ElButton link size="small" @click="insertDetail('【规格参数】')">插入参数</ElButton>
-              <ElButton link size="small" @click="insertDetail('【售后说明】')">插入售后</ElButton>
+      <div class="form-layout">
+        <!-- 左侧锚点导航 -->
+        <aside class="form-sidebar">
+          <div class="sidebar-progress">
+            <div class="progress-header">
+              <span class="progress-label">完成度</span>
+              <span class="progress-percent">{{ completion }}%</span>
             </div>
-            <ElInput
-              v-model="form.detail"
-              type="textarea"
-              :rows="6"
-              placeholder="请输入商品详情（可粘贴富文本内容）"
-            />
+            <ElProgress :percentage="completion" :stroke-width="6" :show-text="false" class="progress-line" />
           </div>
-        </ElFormItem>
-      </SectionCard>
 
-      <!-- 底部操作栏 -->
-      <div class="footer-bar">
-        <div class="footer-tip">
-          <Icon icon="solar:info-circle-bold-duotone" width="15" />
-          <span>{{ saveTip }}</span>
-        </div>
-        <div class="footer-actions">
-          <ElButton size="large" @click="go('/product/list')">取消</ElButton>
-          <ElButton size="large" :loading="saving" @click="handleSave('draft')">保存草稿</ElButton>
-          <ElButton size="large" type="primary" :loading="saving" @click="handleSave('publish')">
-            保存并上架
-          </ElButton>
-        </div>
+          <nav class="sidebar-nav">
+            <a
+              v-for="item in anchors"
+              :key="item.key"
+              class="nav-item"
+              :class="{ active: activeAnchor === item.key }"
+              @click="scrollTo(item.key)"
+            >
+              <Icon :icon="item.icon" width="16" />
+              <span>{{ item.label }}</span>
+              <span v-if="item.badge" class="nav-badge">{{ item.badge }}</span>
+            </a>
+          </nav>
+        </aside>
+
+        <!-- 右侧表单内容 -->
+        <main class="form-main">
+          <!-- 基础信息 -->
+          <section ref="basicSection" class="form-section" data-anchor="basic">
+            <div class="section-header">
+              <div class="section-title">
+                <Icon icon="solar:document-text-bold-duotone" width="18" />
+                基础信息
+              </div>
+              <ElTag v-if="form.name" size="small" effect="light" type="success">已填写</ElTag>
+            </div>
+
+            <ElRow :gutter="24">
+              <ElCol :xs="24" :md="14">
+                <ElFormItem label="商品名称" prop="name">
+                  <ElInput v-model="form.name" placeholder="请输入商品名称" maxlength="60" show-word-limit clearable />
+                </ElFormItem>
+                <ElFormItem label="商品分类" prop="category">
+                  <ElCascader
+                    v-model="form.category"
+                    :options="categoryOptions"
+                    placeholder="请选择商品分类"
+                    style="width: 100%"
+                    clearable
+                  />
+                </ElFormItem>
+                <ElFormItem label="品牌">
+                  <ElSelect v-model="form.brand" placeholder="请选择品牌" clearable filterable style="width: 100%">
+                    <ElOption v-for="b in brands" :key="b.value" :label="b.label" :value="b.value" />
+                  </ElSelect>
+                </ElFormItem>
+                <ElFormItem label="商品标签">
+                  <ElSelect
+                    v-model="form.tags"
+                    multiple
+                    filterable
+                    allow-create
+                    default-first-option
+                    placeholder="选择或输入标签"
+                    style="width: 100%"
+                  >
+                    <ElOption v-for="t in tagOptions" :key="t" :label="t" :value="t" />
+                  </ElSelect>
+                </ElFormItem>
+              </ElCol>
+              <ElCol :xs="24" :md="10">
+                <ElFormItem label="商品编号">
+                  <ElInput v-model="form.no" disabled>
+                    <template #append>
+                      <ElButton size="small" @click="copyNo">复制</ElButton>
+                    </template>
+                  </ElInput>
+                </ElFormItem>
+                <ElFormItem label="上架状态">
+                  <ElRadioGroup v-model="form.status">
+                    <ElRadio value="on">立即上架</ElRadio>
+                    <ElRadio value="off">暂不上架</ElRadio>
+                  </ElRadioGroup>
+                </ElFormItem>
+                <ElFormItem label="排序">
+                  <ElInputNumber v-model="form.sort" :min="0" :max="9999" controls-position="right" style="width: 100%" />
+                </ElFormItem>
+                <ElFormItem label="商品简介">
+                  <ElInput
+                    v-model="form.desc"
+                    type="textarea"
+                    :rows="4"
+                    maxlength="120"
+                    show-word-limit
+                    placeholder="简要描述商品卖点"
+                  />
+                </ElFormItem>
+              </ElCol>
+            </ElRow>
+          </section>
+
+          <!-- 商品图片 -->
+          <section ref="imagesSection" class="form-section" data-anchor="images">
+            <div class="section-header">
+              <div class="section-title">
+                <Icon icon="solar:gallery-bold-duotone" width="18" />
+                商品图片
+              </div>
+              <span class="section-tip">建议 800×800px，最多 5 张，首张为主图</span>
+            </div>
+
+            <ElFormItem label-width="0">
+              <ImageUploader v-model="form.images" :max="5" />
+            </ElFormItem>
+          </section>
+
+          <!-- 规格与价格 -->
+          <section ref="skuSection" class="form-section" data-anchor="sku">
+            <div class="section-header">
+              <div class="section-title">
+                <Icon icon="solar:slider-vertical-bold-duotone" width="18" />
+                规格与价格
+              </div>
+              <ElRadioGroup v-model="skuMode" size="small" @change="handleSkuModeChange">
+                <ElRadioButton label="single">单规格</ElRadioButton>
+                <ElRadioButton label="multi">多规格</ElRadioButton>
+              </ElRadioGroup>
+            </div>
+
+            <SingleSkuForm v-if="skuMode === 'single'" v-model="form.single" />
+
+            <template v-else>
+              <SpecEditor v-model="form.specs" @change="rebuildSkuRows" />
+              <SkuTable v-model:rows="skuRows" :specs="form.specs" @change="onSkuChange" />
+            </template>
+          </section>
+
+          <!-- 商品详情 -->
+          <section ref="detailSection" class="form-section" data-anchor="detail">
+            <div class="section-header">
+              <div class="section-title">
+                <Icon icon="solar:document-add-bold-duotone" width="18" />
+                商品详情
+              </div>
+              <span class="section-tip">支持纯文本，可后续接入富文本编辑器</span>
+            </div>
+
+            <div class="editor-wrap">
+              <div class="editor-toolbar">
+                <ElButton link size="small" @click="insertDetail('【商品卖点】')">插入卖点</ElButton>
+                <ElButton link size="small" @click="insertDetail('【规格参数】')">插入参数</ElButton>
+                <ElButton link size="small" @click="insertDetail('【售后说明】')">插入售后</ElButton>
+              </div>
+              <ElInput
+                v-model="form.detail"
+                type="textarea"
+                :rows="12"
+                placeholder="请输入商品详情（可粘贴富文本内容）"
+              />
+            </div>
+          </section>
+        </main>
       </div>
     </ElForm>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, computed, onMounted } from 'vue'
-import { useRouter, useRoute, onBeforeRouteLeave } from 'vue-router'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import type { FormInstance, FormRules } from 'element-plus'
 import { Icon } from '@iconify/vue'
 
-import SectionCard from './components/SectionCard.vue'
 import ImageUploader from './components/ImageUploader.vue'
 import SingleSkuForm from './components/SingleSkuForm.vue'
 import SpecEditor from './components/SpecEditor.vue'
 import SkuTable from './components/SkuTable.vue'
+
+import {
+  getCategories,
+  getBrands,
+  getTags,
+  getProductDetail,
+  saveProduct
+} from '@/api/product'
 
 import type {
   BrandOption,
@@ -176,19 +219,9 @@ const saving = ref(false)
 const isEdit = computed<boolean>(() => !!route.params.id)
 
 // ---------- 选项 ----------
-const categoryOptions: CategoryOption[] = [
-  { value: 'digital', label: '数码', children: [{ value: 'audio', label: '音频设备' }, { value: 'watch', label: '智能穿戴' }] },
-  { value: 'clothes', label: '服饰', children: [{ value: 'coat', label: '外套' }, { value: 'shirt', label: '衬衫' }] },
-  { value: 'beauty', label: '美妆', children: [{ value: 'skin', label: '护肤' }, { value: 'makeup', label: '彩妆' }] },
-  { value: 'food', label: '食品', children: [{ value: 'snack', label: '零食' }, { value: 'drink', label: '饮品' }] }
-]
-const brands: BrandOption[] = [
-  { value: 'xiaomi', label: '小米' },
-  { value: 'huawei', label: '华为' },
-  { value: 'nike', label: 'Nike' },
-  { value: 'local', label: '自有品牌' }
-]
-const tagOptions: string[] = ['新品', '热卖', '限时折扣', '包邮', '赠品']
+const categoryOptions = ref<CategoryOption[]>([])
+const brands = ref<BrandOption[]>([])
+const tagOptions = ref<string[]>([])
 
 // ---------- 表单 ----------
 const form = reactive<ProductForm>({
@@ -226,6 +259,52 @@ const completion = computed<number>(() => {
   return score
 })
 
+// ---------- 锚点导航 ----------
+const basicSection = ref<HTMLElement>()
+const imagesSection = ref<HTMLElement>()
+const skuSection = ref<HTMLElement>()
+const detailSection = ref<HTMLElement>()
+const activeAnchor = ref('basic')
+
+const anchors = computed(() => [
+  { key: 'basic', label: '基础信息', icon: 'solar:document-text-bold-duotone', badge: '' },
+  { key: 'images', label: '商品图片', icon: 'solar:gallery-bold-duotone', badge: form.images.length ? String(form.images.length) : '' },
+  { key: 'sku', label: '规格与价格', icon: 'solar:slider-vertical-bold-duotone', badge: skuMode.value === 'multi' && skuRows.value.length ? String(skuRows.value.length) : '' },
+  { key: 'detail', label: '商品详情', icon: 'solar:document-add-bold-duotone', badge: '' }
+])
+
+function scrollTo(key: string): void {
+  const sectionMap: Record<string, HTMLElement | undefined> = {
+    basic: basicSection.value,
+    images: imagesSection.value,
+    sku: skuSection.value,
+    detail: detailSection.value
+  }
+  const el = sectionMap[key]
+  if (el) {
+    el.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    activeAnchor.value = key
+  }
+}
+
+function handleScroll(): void {
+  const sections = [
+    { key: 'basic', el: basicSection.value },
+    { key: 'images', el: imagesSection.value },
+    { key: 'sku', el: skuSection.value },
+    { key: 'detail', el: detailSection.value }
+  ].filter(s => s.el)
+
+  const scrollTop = window.scrollY + 120
+  let current = 'basic'
+  for (const s of sections) {
+    if (s.el && s.el.offsetTop <= scrollTop) {
+      current = s.key
+    }
+  }
+  activeAnchor.value = current
+}
+
 // ---------- SKU 模式 ----------
 const skuMode = ref<SkuMode>('single')
 const skuRows = ref<SkuRow[]>([])
@@ -243,7 +322,7 @@ function cartesian(specs: SpecItem[]): string[][] {
     const next: string[][] = []
     acc.forEach(combo => {
       spec.values.forEach(val => {
-        next.push([...combo, val])
+        next.push([...combo, val.name])
       })
     })
     return next
@@ -267,24 +346,27 @@ function rebuildSkuRows(): void {
       originPrice: 0,
       stock: 0,
       skuNo: `SKU${Date.now()}${idx}`,
-      weight: 0
+      weight: 0,
+      image: ''
     }
   })
 }
 
 function onSkuChange(): void {
-  // SKU 行数据变化时可由 SkuTable 内部通过 v-model:rows 同步，此处预留校验/统计扩展点
+  // 预留扩展点
+}
+
+// ---------- 复制编号 ----------
+function copyNo(): void {
+  navigator.clipboard.writeText(form.no)
+    .then(() => ElMessage.success('已复制商品编号'))
+    .catch(() => ElMessage.error('复制失败'))
 }
 
 // ---------- 详情插入 ----------
 function insertDetail(text: string): void {
   form.detail = form.detail ? `${form.detail}\n${text}` : text
 }
-
-// ---------- 保存提示 ----------
-const saveTip = computed<string>(() =>
-  completion.value < 100 ? '信息未填写完整，可先保存草稿' : '信息已填写完整，可直接保存并上架'
-)
 
 // ---------- 保存 ----------
 async function handleSave(type: SaveType): Promise<void> {
@@ -300,10 +382,23 @@ async function handleSave(type: SaveType): Promise<void> {
     return
   }
   saving.value = true
-  await new Promise(r => setTimeout(r, 800))
-  saving.value = false
-  ElMessage.success(type === 'publish' ? '商品已保存并上架' : '草稿已保存')
-  router.push('/product/list')
+  try {
+    const res = await saveProduct(
+      {
+        ...form,
+        id: isEdit.value ? Number(route.params.id) : undefined,
+        skuMode: skuMode.value,
+        skuRows: skuRows.value
+      },
+      type
+    )
+    ElMessage.success(res.message)
+    router.push('/product/list')
+  } catch {
+    ElMessage.error('保存失败')
+  } finally {
+    saving.value = false
+  }
 }
 
 function go(path: string): void {
@@ -329,84 +424,242 @@ onBeforeRouteLeave(async () => {
   }
 })
 
-// ---------- 初始化 ----------
-onMounted(() => {
-  if (isEdit.value) {
-    // TODO: 根据 route.params.id 拉取商品详情并回填 form
-    ElMessage.info(`编辑商品 ID：${String(route.params.id)}`)
+// ---------- 加载详情 ----------
+async function loadDetail(id: number): Promise<void> {
+  try {
+    const detail = await getProductDetail(id)
+    if (!detail) {
+      ElMessage.error('商品不存在')
+      return
+    }
+    Object.assign(form, {
+      name: detail.name,
+      category: detail.category,
+      brand: detail.brand,
+      tags: detail.tags,
+      no: detail.no,
+      status: detail.status,
+      sort: detail.sort,
+      desc: detail.desc,
+      images: detail.images,
+      single: detail.single,
+      specs: detail.specs,
+      detail: detail.detail
+    })
+    skuMode.value = detail.skuMode
+    skuRows.value = detail.skuRows
+  } catch {
+    ElMessage.error('加载商品详情失败')
   }
+}
+
+// ---------- 初始化 ----------
+onMounted(async () => {
+  const [cats, brs, tags] = await Promise.all([getCategories(), getBrands(), getTags()])
+  categoryOptions.value = cats
+  brands.value = brs
+  tagOptions.value = tags
+
+  if (isEdit.value) {
+    await loadDetail(Number(route.params.id))
+  }
+
+  nextTick(() => {
+    window.addEventListener('scroll', handleScroll, { passive: true })
+  })
+})
+
+onBeforeUnmount(() => {
+  window.removeEventListener('scroll', handleScroll)
 })
 </script>
 
 <style lang="scss" scoped>
-// ---------- 设计令牌 ----------
 $primary: #409eff;
 $text-main: #1f2d3d;
 $text-secondary: #8a94a6;
 $border-light: #eef1f6;
 $bg-soft: #f7f9fc;
-$radius-block: 12px;
 $gap: 16px;
-$shadow-card: 0 2px 8px rgba(31, 45, 61, 0.04);
 
-// ---------- 页面 ----------
+@mixin flex-between {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
 .product-create-page {
   padding: $gap;
   background: $bg-soft;
-  // min-height: 100%;
-  
-  padding-bottom: 88px;
+  min-height: 100%;
+  box-sizing: border-box;
 }
 
-// ---------- 进度条 ----------
-.progress-bar {
-  max-width: 1200px;
-  margin: 0 auto 14px;
+.top-bar {
+  position: sticky;
+  top: 18px;
+  z-index: 20;
+  @include flex-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding: 12px 20px;
+  margin-bottom: $gap;
+  background: #fff;
+  border: 1px solid $border-light;
 
-  .progress-inner {
-    background: #fff;
-    border: 1px solid $border-light;
-    border-radius: $radius-block;
-    padding: 12px 18px;
-    box-shadow: $shadow-card;
-  }
-
-  .progress-text {
+  &__left {
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    margin-bottom: 8px;
-    font-size: 13px;
+    gap: 8px;
   }
 
-  .progress-label {
+  &__title {
+    font-size: 18px;
     font-weight: 600;
     color: $text-main;
   }
 
-  .progress-tip {
+  &__right {
+    display: flex;
+    gap: 8px;
+  }
+}
+
+.form-layout {
+  display: flex;
+  gap: $gap;
+  align-items: flex-start;
+}
+
+.form-sidebar {
+  width: 200px;
+  flex-shrink: 0;
+  position: sticky;
+  top: 76px;
+  background: #fff;
+  border: 1px solid $border-light;
+  padding: 16px;
+}
+
+.sidebar-progress {
+  padding-bottom: 16px;
+  margin-bottom: 16px;
+  border-bottom: 1px solid $border-light;
+
+  .progress-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 8px;
+  }
+
+  .progress-label {
+    font-size: 12px;
     color: $text-secondary;
+  }
+
+  .progress-percent {
+    font-size: 14px;
+    font-weight: 700;
+    color: $primary;
   }
 
   .progress-line {
     :deep(.el-progress-bar__outer) {
       background: #eef4fd;
     }
+
+    :deep(.el-progress-bar__inner) {
+      background: $primary;
+    }
   }
 }
 
-// ---------- 表单 ----------
-.product-form {
-  max-width: 1200px;
-  margin: 0 auto;
+.sidebar-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
 }
 
-.header-tip {
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  font-size: 13px;
+  color: $text-secondary;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  user-select: none;
+
+  &:hover {
+    background: $bg-soft;
+    color: $primary;
+  }
+
+  &.active {
+    background: #e8f3ff;
+    color: $primary;
+    font-weight: 600;
+  }
+
+  .nav-badge {
+    margin-left: auto;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 18px;
+    height: 18px;
+    padding: 0 5px;
+    font-size: 11px;
+    font-weight: 600;
+    color: #fff;
+    background: $primary;
+  }
+}
+
+.form-main {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: $gap;
+}
+
+.form-section {
+  background: #fff;
+  border: 1px solid $border-light;
+  padding: 20px 24px;
+  scroll-margin-top: 76px;
+}
+
+.section-header {
+  @include flex-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 20px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid $border-light;
+}
+
+.section-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 15px;
+  font-weight: 600;
+  color: $text-main;
+
+  svg {
+    color: $primary;
+  }
+}
+
+.section-tip {
   font-size: 12px;
   color: $text-secondary;
 }
 
-// ---------- 详情编辑 ----------
 .editor-wrap {
   width: 100%;
 
@@ -417,54 +670,37 @@ $shadow-card: 0 2px 8px rgba(31, 45, 61, 0.04);
     padding: 6px 10px;
     margin-bottom: 8px;
     background: $bg-soft;
-    border-radius: 10px;
+    border: 1px solid $border-light;
   }
 }
 
-// ---------- 底部操作栏 ----------
-.footer-bar {
-  position: fixed;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  z-index: 10;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 14px 24px;
-  background: rgba(255, 255, 255, 0.92);
-  border-top: 1px solid $border-light;
-  backdrop-filter: blur(8px);
-  box-shadow: 0 -4px 16px rgba(31, 45, 61, 0.06);
-
-  .footer-tip {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    font-size: 12px;
-    color: $text-secondary;
-  }
-
-  .footer-actions {
-    display: flex;
-    gap: 12px;
+@media (max-width: 1024px) {
+  .form-sidebar {
+    display: none;
   }
 }
 
-// ---------- 响应式 ----------
 @media (max-width: 768px) {
   .product-create-page {
     padding: 12px;
   }
 
-  .footer-bar {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 10px;
+  .top-bar {
+    padding: 10px 14px;
+
+    &__title {
+      font-size: 16px;
+    }
+
+    &__right {
+      width: 100%;
+      justify-content: flex-end;
+    }
   }
 
-  .footer-actions {
-    justify-content: flex-end;
+  .form-section {
+    padding: 16px;
+    scroll-margin-top: 120px;
   }
 }
 </style>

@@ -6,12 +6,14 @@ import vue from '@vitejs/plugin-vue'
 import AutoImport from 'unplugin-auto-import/vite'
 import Components from 'unplugin-vue-components/vite'
 import { ElementPlusResolver } from 'unplugin-vue-components/resolvers'
+import {msw} from "msw/vite"
 
 
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [
     vue(),
+    msw(),
     AutoImport({
       imports:[
         "vue",
@@ -33,6 +35,7 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url)),
+      '@model': fileURLToPath(new URL('./model', import.meta.url))
     },
   },
   server: {

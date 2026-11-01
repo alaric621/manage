@@ -660,6 +660,7 @@ $shadow-hover: 0 10px 28px rgba(31, 45, 61, 0.10);
   padding: $gap;
   // background: $bg-soft;
   min-height: 100%;
+  box-sizing: border-box;
 }
 
 .panel-card {
